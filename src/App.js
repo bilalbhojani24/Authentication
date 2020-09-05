@@ -1,25 +1,66 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, useState } from "react";
+import "./App.css";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link,
+  Redirect,
+} from "react-router-dom";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Main from "./components/Main";
+import Company from "./components/Company";
+import protectedRoute from "./components/helper/Auth";
 
 function App() {
+  const AuthApi = React.createContext();
+  const Auth = React.createContext(AuthApi);
+  const [auth, setAuth] = React.useState(false);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthApi.Provider value={(auth, setAuth)}>
+      <Router>
+        <nav className="navbar navbar-default">
+          <div className="container">
+            <div className="navbar-header">
+              <Link to="" className="navbar-brand">
+                COMPANY
+              </Link>
+            </div>
+            <div className="navbar-collapse collapse" id="menu">
+              <ul className="nav navbar-right navbar-nav">
+                <li>
+                  <Link to="/signup">Signup</Link>
+                </li>
+                <li>
+                  <Link to="/login">Login</Link>
+                </li>
+              </ul>
+              <ul className="nav navbar-right navbar-nav">
+                <li>
+                  <Link to="/main">Home</Link>
+                </li>
+                <li>
+                  <Link to="/company">Company</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <Switch>
+          <Route exact path="/" component={Login} />
+          <protectedRoute
+            exact
+            path="/main"
+            auth={Auth.auth}
+            component={Main}
+          />
+          <protectedRoute exact path="/company" component={Company} />
+          <Route exact path="/Login" component={Login} />
+          <Route exact path="/signup" component={Signup} />
+        </Switch>
+      </Router>
+    </AuthApi.Provider>
   );
 }
 
